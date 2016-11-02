@@ -29,7 +29,7 @@
         this.domain = '';
         this.protocol = '';
         this.resourceTimeout = 10000;
-        this.jitter = 100;
+        this.jitter = 1000;
     }
     
     Crawler.webpage = require('webpage');
@@ -143,7 +143,7 @@
         }
 
         // don't need to follow these down
-        if (url.indexOf('.js') > -1 || url.indexOf('.css') > -1) {
+        if (url.indexOf('.js') > -1) {
             return;
         }
 
@@ -221,7 +221,7 @@
 
             // are we done?
             if (self.urlsTodo() === 0) {
-                phantom.exit();
+                phantom.exit(0);
             }
         });
     };
