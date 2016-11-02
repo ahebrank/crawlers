@@ -28,6 +28,8 @@
         this.visitedURLs = {};
         this.domain = '';
         this.protocol = '';
+        this.resourceTimeout = 10000;
+        this.jitter = 100;
     }
     
     Crawler.webpage = require('webpage');
@@ -55,7 +57,7 @@
         });
 
         // sort the resources by size descending
-        resourceList.sort(function(a, b) {
+        resouceList = resourceList.sort(function(a, b) {
             if (a.size > b.size) {
                 return -1;
             }
@@ -95,6 +97,15 @@
             return (this.domain === getDomain(url));
         }
         return false;
+    };
+
+    // number of pages started but not finished
+    Crawler.prototype.urlsTodo = function() {
+        var self = this;
+        return (Object.keys(self.visitedURLs).length - 
+                    Object.keys(self.visitedURLs).filter(function (key) {
+                        return self.visitedURLs[key];
+                    }).length);
     };
 
     Crawler.prototype.crawl = function (url, depth, onSuccess, onFailure) {
@@ -144,7 +155,7 @@
         self.visitedURLs[url] = false;
 
         var page = Crawler.webpage.create();
-        page.settings.resourceTimeout = 3000;
+        page.settings.resourceTimeout = self.resourceTimeout;
         page.resources = [];
 
         page.onLoadStarted = function () {
@@ -209,19 +220,9 @@
             self.visitedURLs[url] = true;
 
             // are we done?
-            var todo = Object.keys(self.visitedURLs).length - 
-                    Object.keys(self.visitedURLs).filter(function (key) {
-                        return self.visitedURLs[key];
-                    }).length;
-            //console.log(todo + ' remaining...');
-            if (todo === 0) {
+            if (self.urlsTodo() === 0) {
                 phantom.exit();
             }
-            // if (todo < 3) {
-            //     console.log(Object.keys(self.visitedURLs).filter(function (key) {
-            //             return !self.visitedURLs[key];
-            //         }));
-            // }
         });
     };
 
@@ -240,6 +241,10 @@
             return self.inDomain(url);
         }).forEach(function (url) {
             self.crawl(url, depth, onSuccess, onFailure);
+            // slow things down
+            setTimeout(function() {
+                return true;
+            }, Math.random()*self.jitter);
         });
     };
 
