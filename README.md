@@ -6,7 +6,7 @@ Crawl a site and check resource sizes.  Useful for e.g., identifying pages with 
 
 Requires phantomjs.
 
-### Usage
+### resource-crawler usage
 
 Crawl a site (to interior depth 3)
 
@@ -25,3 +25,16 @@ Sort by total page weight:
 phantomjs resource-crawler.js https://www.ysu.edu 3 | sort -k2
 ```
 
+## old-links.js
+
+Crawl a site and check links for references to an old site.
+
+Requires phantomjs.
+
+### old-links usage
+
+Crawl www.ysu.edu to interior depth 3, checking for references to old-ysu.edu.
+
+```
+phantomjs bad-links.js https://www.ysu.edu 3 https://old-ysu.edu
+```
