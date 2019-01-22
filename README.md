@@ -36,5 +36,5 @@ Requires phantomjs.
 Crawl www.ysu.edu to interior depth 3, checking for references to old-ysu.edu.
 
 ```
-phantomjs bad-links.js https://www.ysu.edu 3 https://old-ysu.edu
+phantomjs old-links.js https://www.ysu.edu 3 https://old-ysu.edu
 ```
